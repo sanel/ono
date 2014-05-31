@@ -16,4 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "ono-script.h"
+
+scheme *ono_script_init(GtkWidget *menu) {
+	scheme *scm = NULL;
+	char   *conf_path;
+	FILE   *fd;
+
+	scm = scheme_init_new();
+	scheme_set_output_port_file(scm, stdout);
+	scheme_set_input_port_file(scm, stdin);
+
+	conf_path = g_strdup_printf("%s/.onorc", g_get_home_dir());
+	fd = fopen(conf_path, "r");
+	if(!fd)
+		g_warning("Unable to read configuration from: %s\n", conf_path);
+	else
+		scheme_load_named_file(scm, fd, "~/.onorc");
+
+	g_free(conf_path);
+	return scm;
+}
+
+void ono_script_fini(scheme *scm) {
+	if(scm) {
+		scheme_deinit(scm);
+		free(scm);
+		scm = NULL;
+	}
+}

@@ -19,6 +19,9 @@
 #include <stdio.h>
 #include "ono-script.h"
 
+/* global interpreter object */
+static scheme *ono_interp;
+
 static
 void tray_icon_on_click(GtkStatusIcon *status_icon, 
                         gpointer user_data)
@@ -39,6 +42,7 @@ void tray_icon_on_menu(GtkStatusIcon *status_icon, guint button,
 
 static
 void menu_exit(gchar *str) {
+	ono_script_fini(ono_interp);
 	gtk_main_quit();
 }
 
@@ -62,6 +66,9 @@ void create_tray_icon(void) {
 	gtk_menu_prepend(GTK_MENU(menu), sep_item);
 	gtk_widget_show(sep_item);
 
+	/* init interpreter and build user menus if needed */
+	ono_interp = ono_script_init(menu);
+
 	gtk_widget_show(menu);
 
 	/* tray icon */
@@ -79,7 +86,6 @@ void create_tray_icon(void) {
 
 int main(int argc, char **argv) {
 	GtkStatusIcon *tray_icon;
-
 	gtk_init(&argc, &argv);
 	create_tray_icon();
 	gtk_main();

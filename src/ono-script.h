@@ -20,7 +20,9 @@
 #define __ONO_SCRIPT_H__
 
 #include <gtk/gtk.h>
+#include "ts/scheme.h"
 
-int ono_init_script(GtkWidget *menu);
+scheme *ono_script_init(GtkWidget *menu);
+void    ono_script_fini(scheme *scm);
 
 #endif

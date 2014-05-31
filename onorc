@@ -10,7 +10,7 @@
 	(offlineimap 'gmail))])
 
 (ono-menu
- ["Fetch gmail" 'gmail])
+ ["Fetch gmail" 'gmail "/path/foo/gmail-icon.png"])
 
 (ono-on-tray-click
  (fn ()
@@ -20,3 +20,7 @@
  (lambda (line)
    (if (re-match "^ERROR:" line)
 	 (system (format "notify-send \"~A\"" line)))))
+
+(ono-on-new-mail
+ (lambda (account count)
+   (system (format "notify-send \"~A: (~A)\"" account count))))
