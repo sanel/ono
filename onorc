@@ -1,0 +1,22 @@
+;; -*- mode: scheme; -*-
+;; Sample configuration for ono. To make it user specific, copy and edit it to $HOME/.onorc.
+
+(set! *offlineimap-path* "/opt/bin/offlineimap")
+(set! *offlineimap-args* "-u quiet")
+
+(ono-menu
+ ["Fetch gmail"
+  (lambda ()
+	(offlineimap 'gmail))])
+
+(ono-menu
+ ["Fetch gmail" 'gmail])
+
+(ono-on-tray-click
+ (fn ()
+   (system "mrxvt -e mutt")))
+
+(ono-on-stdout
+ (lambda (line)
+   (if (re-match "^ERROR:" line)
+	 (system (format "notify-send \"~A\"" line)))))

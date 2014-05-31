@@ -1,0 +1,44 @@
+# GTK flags
+GTK_INCLUDE ?= `pkg-config gtk+-2.0 --cflags` ;
+GTK_LIBS    ?= `pkg-config gtk+-2.0 --libs` ;
+
+# program executable name
+APP_NAME = ono ;
+
+# program source code
+APP_SOURCE = ono.c ono-script.c ;
+
+# program flags
+APP_FLAGS = $(GTK_INCLUDE) ;
+
+# program libraries
+APP_LIBS = $(GTK_LIBS) ;
+
+# tinyscheme
+TS_SOURCE = ts/scheme.c ;
+TS_FLAGS  = -I src/ts ;
+APP_SOURCE += $(TS_SOURCE) ;
+
+if ! $(RELEASE) {
+  Echo "Building debug version..." ;
+  OPTIM_FLAGS = -DDEBUG -g3 ;
+} else {
+  Echo "Building release version..." ;
+  OPTIM_FLAGS = -O2 -DNDEBUG ;
+}
+
+APP_FLAGS += $(OPTIM_FLAGS) ;
+TS_FLAGS  += $(OPTIM_FLAGS) ;
+
+# compilation flags
+ObjectCcFlags $(APP_SOURCE) : $(APP_FLAGS) ;
+ObjectCcFlags $(TS_SOURCE) : $(TS_FLAGS) ;
+
+# linker flags
+LINKLIBS on $(APP_NAME) = $(APP_LIBS) ;
+
+# where cpp files are and where builded executable will be stored
+SEARCH_SOURCE = src ;
+LOCATE_TARGET = $(SEARCH_SOURCE) ;
+
+Main $(APP_NAME) : $(APP_SOURCE) ;
