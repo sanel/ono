@@ -5,12 +5,16 @@
 (set! *offlineimap-args* "-u quiet")
 
 (ono-menu
- ["Fetch gmail"
-  (lambda ()
-	(offlineimap 'gmail))])
+ #("Fetch gmail"
+   (lambda ()
+	 (offlineimap 'gmail)))
+ #("Fetch Yahoo!"
+   (lambda ()
+	 (offlineimap 'yahoo))))
 
 (ono-menu
- ["Fetch gmail" 'gmail "/path/foo/gmail-icon.png"])
+ '("Fetch gmail" "gmail" "/path/foo/gmail-icon.png")
+ '("Fetch yahoo" "yahoo"))
 
 (ono-on-tray-click
  (fn ()
