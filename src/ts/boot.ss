@@ -731,4 +731,59 @@
                       (not (cond-eval (cadr condition)))))
            (else (error "cond-expand : unknown operator" (car condition)))))))
 
-(gc-verbose #f)
+;;; ono specific stuff
+
+(define-macro (-> x form . body)
+  (if (pair? body)
+    `(-> (-> ,x ,form) ,@body)
+    (if (list? form)
+      `(,(car form) ,x ,@(cdr form))
+      (list form x) )))
+
+(define-macro (->> x form . body)
+  (if (pair? body)
+    `(->> (->> ,x ,form) ,@body)
+    (if (list? form)
+      `(,(car form) ,@(cdr form) ,x)
+      (list form x) )))
+
+(define (compose f g)
+  (lambda args
+    (f (apply g args))))
+
+(define *include-path* '())
+
+(define (include file)
+  (define (try-include? path)
+	(let ([port (open-input-file path)])
+	  (if port
+		(begin
+		  (load path)
+		  (close-input-port port)
+		  #t)
+		#f)))
+
+  (define empty? (compose not pair?))
+
+  (unless (try-include? file)
+    (if (empty? *include-path*)
+	  (error "*include-path* is empty")
+	  (let ([status (let loop ([paths *include-path*])
+					  (unless (empty? paths)
+					    (if (try-include? (string-append (car paths) "/" file))
+						  #t
+						  (loop (cdr paths)))))])
+		(unless (eq? status #t)
+		  (error "Unable to load" file))))))
+
+(define *offlineimap-path* "offlineimap")
+(define *offlineimap-args* "")
+(define *ono-menu* '())
+(define *ono-on-tray-click* #f)
+(define *ono-on-stdout* #f)
+(define *ono-on-new-mail* #f)
+
+(define (ono-menu . content)   (set! *ono-menu* content))
+(define (ono-on-tray-click fn) (set! *ono-on-tray-click* fn))
+(define (ono-on-stdout fn)     (set! *ono-on-stdout* fn))
+(define (ono-on-new-mail fn)   (set! *ono-on-new-mail* fn))

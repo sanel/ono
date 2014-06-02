@@ -22,9 +22,9 @@
 
 #include "boot_ss.h"
 
-scheme *ono_script_init(GtkWidget *menu) {
+scheme *ono_script_init(const char *cfile, GtkWidget *menu) {
 	scheme *scm = NULL;
-	char   *conf_path;
+	char   *conf_home = NULL;
 	FILE   *fd;
 
 	scm = scheme_init_new();
@@ -33,14 +33,18 @@ scheme *ono_script_init(GtkWidget *menu) {
 	/* interpreter boot stuff */
 	scheme_load_string(scm, bundled_scripts_content);
 
-	conf_path = g_strdup_printf("%s/.onorc", g_get_home_dir());
-	fd = fopen(conf_path, "r");
-	if(!fd)
-		g_warning("Unable to read configuration from: %s\n", conf_path);
-	else
-		scheme_load_named_file(scm, fd, ".onorc");
+	if(!cfile) {
+		conf_home = g_strdup_printf("%s/.onorc", g_get_home_dir());
+		cfile = conf_home;
+	}
 
-	g_free(conf_path);
+	fd = fopen(cfile, "r");
+	if(!fd)
+		g_warning("Unable to read configuration from: %s\n", cfile);
+	else
+		scheme_load_named_file(scm, fd, conf_home ? "~/.onorc" : cfile);
+
+	if(conf_home) g_free(conf_home);
 	return scm;
 }
 

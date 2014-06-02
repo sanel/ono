@@ -17,7 +17,7 @@
  '("Fetch yahoo" "yahoo"))
 
 (ono-on-tray-click
- (fn ()
+ (lambda ()
    (system "mrxvt -e mutt")))
 
 (ono-on-stdout
