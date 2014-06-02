@@ -1,7 +1,7 @@
 # ono 
 
 Small application that sits inside your system, allowing you to manage
-(offlineimap)[http://offlineimap.org/] from any desktop environment.
+[Offlineimap](http://offlineimap.org/) from any desktop environment.
 
 ## License
 
