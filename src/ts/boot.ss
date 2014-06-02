@@ -758,11 +758,11 @@
   (newline))
 
 ;; check if function is defined and call it with argumenrs
-(define (call-function-maybe sym args)
+(define (call-function-maybe sym . args)
   (if (defined? sym)
     (let ([fun (eval sym)])
-	  (if (closure? fun)
-		(fun args)))))
+      (if (closure? fun)
+        (apply fun args)))))
 
 ;;; include mechanism
 
@@ -770,24 +770,24 @@
 
 (define (include file)
   (define (try-include? path)
-	(let ([port (open-input-file path)])
-	  (if port
-		(begin
-		  (load path)
-		  (close-input-port port)
-		  #t)
-		#f)))
+    (let ([port (open-input-file path)])
+      (if port
+        (begin
+          (load path)
+          (close-input-port port)
+          #t)
+        #f)))
 
   (unless (try-include? file)
-	(if (empty? *include-path*)
-	  (error "*include-path* is empty")
-	  (let ([status (let loop ([paths *include-path*])
-					  (unless (empty? paths)
-						(if (try-include? (string-append (car paths) "/" file))
-						  #t
-						  (loop (cdr paths)))))])
-		(unless (eq? status #t)
-		  (error "Unable to load" file))))))
+    (if (empty? *include-path*)
+      (error "*include-path* is empty")
+      (let ([status (let loop ([paths *include-path*])
+                      (unless (empty? paths)
+                        (if (try-include? (string-append (car paths) "/" file))
+                          #t
+                          (loop (cdr paths)))))])
+        (unless (eq? status #t)
+          (error "Unable to load" file))))))
 
 (define *offlineimap-path* "offlineimap")
 (define *offlineimap-args* "")
@@ -801,23 +801,26 @@
   ;; Now lookup for plain account names and if found, replace it with function call.
   ;; This can look like e.g. (vector "Foo" "gmail") -> (vector "Foo" (lambda () (offlineimap "-a gmail")))
   (let loop ([menu *ono-menu*])
-	(unless (empty? menu)
-	  (let ([item (car menu)])
-		 (if (vector? item)
-		   (let ([vitem (vector-ref item 1)])
-			 (cond
-			  [(string? vitem) (vector-set! item 1 (lambda ()
-													 (offlineimap (string-append "-a " vitem))))]
-			  [(closure? vitem)] #t
-			  [else
-			   (error "Unsupported element in ono-menu list. Only strings or functions are allowed.")]))))
-	  (loop (cdr menu)))))
+    (unless (empty? menu)
+      (let ([item (car menu)])
+         (if (vector? item)
+           (let ([vitem (vector-ref item 1)])
+             (cond
+              [(string? vitem) (vector-set! item 1 (lambda ()
+                                                     (offlineimap vitem #f)))]
+              [(closure? vitem)] #t
+              [else
+               (error "Unsupported element in ono-menu list. Only strings or functions are allowed.")]))))
+      (loop (cdr menu)))))
 
 (define (ono-on-tray-click fn) (set! *ono-on-tray-click* fn))
 (define (ono-on-stdout fn)     (set! *ono-on-stdout* fn))
 (define (ono-on-new-mail fn)   (set! *ono-on-new-mail* fn))
 
-(define (offlineimap args)
-  (call-function-maybe 'offlineimap-pre-hook args)
-  (system (string-append *offlineimap-path* " " *offlineimap-args* " " args))
-  (call-function-maybe 'offlineimap-post-hook args))
+(define (offlineimap account args)
+  (call-function-maybe 'offlineimap-pre-hook account args)
+  (let ([args (if (string? args)
+                args
+                "")])
+    (system (string-append *offlineimap-path* " " *offlineimap-args* " " args " -a " account)))
+  (call-function-maybe 'offlineimap-post-hook account args))
