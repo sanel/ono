@@ -1,14 +1,49 @@
 ;; -*- mode: scheme; -*-
 ;; Sample configuration for ono. To make it user specific, copy and edit it to $HOME/.onorc.
 
-;(set! *offlineimap-path* "/opt/bin/offlineimap")
+;; offlineimap path. By default, ono will look in $PATH for offlineimap binary and if you keep
+;; it somewhere else (outside $PATH), uncomment this line and setup absolute path.
+;(set! *offlineimap-path* "/opt/offlineimap/bin/offlineimap")
+
+;; offlineimap arguments passed to all accounts
 ;(set! *offlineimap-args* "-u quiet")
+
+;; Main ono menu (invoked with right mouse button on ono icon). This menu can have mulitple
+;; forms and in general, this is the syntax:
+;;
+;; (ono-menu
+;;   (vector MENU-LABEL STRING-OR-FUNCTION OPTIONAL-MENU-ICON
+;;   (vector ...))
+;;
+;; MENU-LABEL will be menu item label; clicking on it you will invoke STRING-OR-FUNCTION part
+;; 
+;; STRING-OR-FUNCTION can be either string or Scheme function. If you supply string, ono will
+;; assume it is offlineimap account and will call it as that; with Scheme function you should
+;; manually call offlineimap (with (offlineimap)) function. For example:
+;;
+;; (ono-menu
+;;   (vector "Get gmail" "gmail") -> assumed you have 'gmail' account, callable with 'offlineimap -a gmail'
+;;   (vector "Get gmail" (lambda ()
+;;                         (offlineimape "gmail" #f))) -> same as above
+;;   (vector "Get All"   (lambda ()
+;;                         (offlineimape #f #f)))) -> call offlineimap without arguments
+;; 
+;;
+;; OPTIONAL-MENU-ICON is path to menu icon that will be displayed alongside MENU-LABEL. This icon
+;; can be absolute path to some icon or icon from Gtk icon theme (in that case you must supply icon
+;; name without extension). For example:
+;;
+;; (ono-menu
+;;   (vector "Get gmail" "gmail" "path/to/gmail.png")  -> absolute icon path
+;;   (vector "Get gmail" "gmail" "gmail")              -> icon from icon theme
+;;   ...)
 
 (ono-menu
   (vector "Fetch yahoo" "yahoo")
   (vector "Fetch gmail" "gmail")
   (vector "Fetch All" (lambda () (offlineimap #f #f))))
 
+;; Function called when you click on ono icon, with left mouse button.
 (ono-on-tray-click
  (lambda ()
    (system "mrxvt -m -e mutt")))

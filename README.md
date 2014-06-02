@@ -1,7 +1,7 @@
-# ono - Offlineimap NOtifier
+# ono 
 
-Small application that sits inside your tray and notify you when the
-new mail arrives.
+Small application that sits inside your system, allowing you to manage
+(offlineimap)[http://offlineimap.org/] from any desktop environment.
 
 ## License
 
