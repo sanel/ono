@@ -2,21 +2,13 @@
 ;; Sample configuration for ono. To make it user specific, copy and edit it to $HOME/.onorc.
 
 ;(set! *offlineimap-path* "/opt/bin/offlineimap")
-(set! *offlineimap-args* "-u quiet")
+;(set! *offlineimap-args* "-u quiet")
 
 (ono-menu
-  #("Fetch yahoo" "yahoo")
-  #("Fetch gmail" "gmail"))
+  (vector "Fetch yahoo" "yahoo")
+  (vector "Fetch gmail" "gmail")
+  (vector "Fetch All" (lambda () (offlineimap #f #f))))
 
 (ono-on-tray-click
  (lambda ()
    (system "mrxvt -m -e mutt")))
-
-(ono-on-stdout
- (lambda (line)
-   (if (re-match "^ERROR:" line)
-	 (system (format "notify-send \"~A\"" line)))))
-
-(ono-on-new-mail
- (lambda (account count)
-   (system (format "notify-send \"~A: (~A)\"" account count))))

@@ -39,18 +39,6 @@
 static void menu_item_callback(GtkMenuItem *widget, gpointer user_data);
 
 static
-pointer _system(scheme *s, pointer args) {
-	int ret;
-	pointer arg = s->vptr->pair_car(args);
-
-	SCHEME_RET_IF_FAIL(s, arg != s->NIL && s->vptr->is_string(arg),
-					   "Expected string object as first argument.");
-
-	ret = system(s->vptr->string_value(arg));
-	return s->vptr->mk_integer(s, ret);
-}
-
-static
 pointer _icon_from_theme(scheme *s, pointer args) {
 	GtkIconTheme *default_theme;
 	GtkIconInfo  *icon_info;
@@ -75,9 +63,57 @@ pointer _icon_from_theme(scheme *s, pointer args) {
 }
 
 static
+pointer _system(scheme *s, pointer args) {
+	int ret;
+	pointer arg = s->vptr->pair_car(args);
+
+	SCHEME_RET_IF_FAIL(s, arg != s->NIL && s->vptr->is_string(arg),
+					   "Expected string object as first argument.");
+
+	ret = system(s->vptr->string_value(arg));
+	return s->vptr->mk_integer(s, ret);
+}
+
+static
+pointer _system_with_reader(scheme *s, pointer args) {
+	pointer arg;
+	const char *cmd;
+	FILE *fd;
+
+	arg = s->vptr->pair_car(args);
+	SCHEME_RET_IF_FAIL(s, arg != s->NIL && s->vptr->is_string(arg),
+					   "Expected string object as first argument.");
+
+	cmd = s->vptr->string_value(arg);
+
+	args = s->vptr->pair_cdr(args);
+	arg  = s->vptr->pair_car(args);
+	SCHEME_RET_IF_FAIL(s, arg != s->NIL && s->vptr->is_closure(arg),
+					   "Expected function as the second argument.");
+
+	fd = popen(cmd, "r");
+	if(fd) {
+		char buf[1024];
+		pointer val;
+
+		while((fgets(buf, sizeof(buf), fd)) != NULL) {
+			val = s->vptr->mk_string(s, buf);
+			scheme_call(s, arg, cons(s, val, s->NIL));
+		}
+
+		pclose(fd);
+		return s->T;
+	}
+
+	g_warning("Unable to execute command: %s\n", cmd);
+	return s->F;
+}
+
+static
 void ono_script_init_internals(scheme *s) {
 	SCHEME_DEFINE(s, _icon_from_theme, "icon-from-theme");
 	SCHEME_DEFINE(s, _system, "system");
+	SCHEME_DEFINE(s, _system_with_reader, "system-with-reader");
 }
 
 scheme *ono_script_init(const char *cfile) {
