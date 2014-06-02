@@ -757,6 +757,15 @@
   (for-each display args)
   (newline))
 
+;; check if function is defined and call it with argumenrs
+(define (call-function-maybe sym args)
+  (if (defined? sym)
+    (let ([fun (eval sym)])
+	  (if (closure? fun)
+		(fun args)))))
+
+;;; include mechanism
+
 (define *include-path* '())
 
 (define (include file)
@@ -809,4 +818,6 @@
 (define (ono-on-new-mail fn)   (set! *ono-on-new-mail* fn))
 
 (define (offlineimap args)
-  (system (string-append *offlineimap-path* " " *offlineimap-args* " " args)))
+  (call-function-maybe 'offlineimap-pre-hook args)
+  (system (string-append *offlineimap-path* " " *offlineimap-args* " " args))
+  (call-function-maybe 'offlineimap-post-hook args))

@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include "ono-script.h"
+#include "ts/scheme-private.h"
 
 /* global interpreter object */
 static scheme *ono_interp;
@@ -27,15 +28,19 @@ static int     start_repl = 0;
 static char   *conf_path  = NULL;
 
 static
-void tray_icon_on_click(GtkStatusIcon *status_icon, 
-                        gpointer user_data)
-{
-	printf("Clicked on tray icon\n");
+void tray_icon_on_click(GtkStatusIcon *status_icon, gpointer user_data) {
+	pointer func;
+	scheme *s = (scheme*)user_data;
+
+	func = scheme_eval(s, s->vptr->mk_symbol(s, "*ono-on-tray-click*"));
+	if(s->vptr->is_closure(func)) {
+		scheme_call(s, func, s->NIL);
+	}
 }
 
 static
 void tray_icon_on_menu(GtkStatusIcon *status_icon, guint button,
-                       guint activate_time, gpointer menu)
+					   guint activate_time, gpointer menu)
 {
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
 				   gtk_status_icon_position_menu,
@@ -45,7 +50,7 @@ void tray_icon_on_menu(GtkStatusIcon *status_icon, guint button,
 }
 
 static
-void menu_exit(gchar *str) {
+void menu_exit(GtkWidget *widget, gpointer user_data) {
 	ono_script_fini(ono_interp);
 	gtk_main_quit();
 }
@@ -61,8 +66,8 @@ void create_tray_icon(void) {
 
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(quit_item),
 							  gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU));
-	gtk_signal_connect_object(GTK_OBJECT(quit_item), "activate",
-							  GTK_SIGNAL_FUNC(menu_exit), NULL);
+
+	g_signal_connect(G_OBJECT(quit_item), "activate", G_CALLBACK(menu_exit), NULL);
 	gtk_menu_append(GTK_MENU(menu), quit_item);
 	gtk_widget_show(quit_item);
 
@@ -80,7 +85,7 @@ void create_tray_icon(void) {
 	/* tray icon */
 	tray_icon = gtk_status_icon_new();
 	g_signal_connect(G_OBJECT(tray_icon), "activate",
-					 G_CALLBACK(tray_icon_on_click), NULL);
+					 G_CALLBACK(tray_icon_on_click), ono_interp);
 
 	g_signal_connect(G_OBJECT(tray_icon), "popup-menu",
 					 G_CALLBACK(tray_icon_on_menu), menu);

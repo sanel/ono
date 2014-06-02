@@ -36,6 +36,8 @@
 							sc->vptr->mk_symbol(sc, func_name),			\
 							sc->vptr->mk_foreign_func(sc, func_ptr))
 
+static void menu_item_callback(GtkMenuItem *widget, gpointer user_data);
+
 static
 pointer _system(scheme *s, pointer args) {
 	int ret;
@@ -84,6 +86,7 @@ scheme *ono_script_init(const char *cfile) {
 	FILE   *fd;
 
 	scm = scheme_init_new();
+
 	scheme_set_output_port_file(scm, stdout);
 	scheme_set_input_port_file(scm, stdin);
 	/* interpreter boot stuff */
@@ -113,9 +116,14 @@ void ono_script_fini(scheme *scm) {
 	}
 }
 
-GtkWidget *ono_script_parse_menu(scheme *s, GtkWidget *menu) {
+/*
+ * to deduplicate, this function will either build menu from *ono-menu* variable
+ * or run menu item callback, associated with given label
+ */
+static GtkWidget *fill_or_run(scheme *s, GtkWidget *menu, const char *find_label) {
 	pointer it, user_menu, v, label, icon;
 	GtkWidget *menu_item;
+	const char *mlabel;
 
 	user_menu = scheme_eval(s, s->vptr->mk_symbol(s, "*ono-menu*"));
 
@@ -124,6 +132,9 @@ GtkWidget *ono_script_parse_menu(scheme *s, GtkWidget *menu) {
 		v = s->vptr->pair_car(it);
 		/* each item must be a vector */
 		if(!s->vptr->is_vector(v)) continue;
+
+		/* and has to have at least 2 elements, label and callback */
+		if(s->vptr->vector_length(v) < 2) continue;
 
 		/* menu item label */
 		label = s->vptr->vector_elem(v, 0);
@@ -135,15 +146,42 @@ GtkWidget *ono_script_parse_menu(scheme *s, GtkWidget *menu) {
 			if(!s->vptr->is_string(icon)) continue;
 		}
 
-		menu_item = gtk_image_menu_item_new_with_label(s->vptr->string_value(label));
-		if(icon != s->F) {
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
-										  gtk_image_new_from_file(s->vptr->string_value(icon)));
-		}
+		mlabel = s->vptr->string_value(label);
 
-		gtk_menu_prepend(GTK_MENU(menu), menu_item);
-		gtk_widget_show(menu_item);
+		if(menu) {
+			menu_item = gtk_image_menu_item_new_with_label(mlabel);
+			if(icon != s->F) {
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
+											  gtk_image_new_from_file(s->vptr->string_value(icon)));
+			}
+
+			g_signal_connect(G_OBJECT(menu_item), "activate", G_CALLBACK(menu_item_callback), s);
+			gtk_menu_prepend(GTK_MENU(menu), menu_item);
+			gtk_widget_show(menu_item);
+
+		} else if(g_strcmp0(mlabel, find_label) == 0) {
+			pointer func = s->vptr->vector_elem(v, 1);
+			if(s->vptr->is_closure(func))
+				scheme_call(s, func, s->NIL);
+		}
 	}
 
 	return menu;
+
+}
+
+static
+void menu_item_scheme_callback(scheme *s, const char *label) {
+	fill_or_run(s, NULL, label);
+}
+
+static
+void menu_item_callback(GtkMenuItem *widget, gpointer user_data) {
+	const gchar *label = gtk_menu_item_get_label(GTK_MENU_ITEM(widget));
+	scheme *s = (scheme*)user_data;
+	menu_item_scheme_callback(s, (const char*)label);
+}
+
+GtkWidget *ono_script_parse_menu(scheme *s, GtkWidget *menu) {
+	return fill_or_run(s, menu, NULL);
 }

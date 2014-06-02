@@ -1,16 +1,16 @@
 ;; -*- mode: scheme; -*-
 ;; Sample configuration for ono. To make it user specific, copy and edit it to $HOME/.onorc.
 
-(set! *offlineimap-path* "/opt/bin/offlineimap")
+;(set! *offlineimap-path* "/opt/bin/offlineimap")
 (set! *offlineimap-args* "-u quiet")
 
 (ono-menu
-  (vector "Fetch gmail" "gmail" (icon-from-theme "internet-mail"))
-  (vector "Fetch yahoo" "yahoo"))
+  #("Fetch yahoo" "yahoo")
+  #("Fetch gmail" "gmail"))
 
 (ono-on-tray-click
  (lambda ()
-   (system "mrxvt -e mutt")))
+   (system "mrxvt -m -e mutt")))
 
 (ono-on-stdout
  (lambda (line)
