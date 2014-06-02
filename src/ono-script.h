@@ -22,7 +22,9 @@
 #include <gtk/gtk.h>
 #include "ts/scheme.h"
 
-scheme *ono_script_init(const char *cfile, GtkWidget *menu);
+scheme *ono_script_init(const char *cfile);
 void    ono_script_fini(scheme *scm);
+
+GtkWidget *ono_script_parse_menu(scheme *scm, GtkWidget *menu);
 
 #endif

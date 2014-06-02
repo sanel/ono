@@ -70,14 +70,16 @@ void create_tray_icon(void) {
 	gtk_menu_prepend(GTK_MENU(menu), sep_item);
 	gtk_widget_show(sep_item);
 
-	/* init interpreter and build user menus if needed */
-	ono_interp = ono_script_init(conf_path, menu);
+	/* init interpreter */
+	ono_interp = ono_script_init(conf_path);
 
+	/* get user supplied menu */
+	menu = ono_script_parse_menu(ono_interp, menu);
 	gtk_widget_show(menu);
 
 	/* tray icon */
 	tray_icon = gtk_status_icon_new();
-	g_signal_connect(G_OBJECT(tray_icon), "activate", 
+	g_signal_connect(G_OBJECT(tray_icon), "activate",
 					 G_CALLBACK(tray_icon_on_click), NULL);
 
 	g_signal_connect(G_OBJECT(tray_icon), "popup-menu",
@@ -135,14 +137,16 @@ int main(int argc, char **argv) {
 	GtkStatusIcon *tray_icon;
 	parse_args(argc, argv);
 
+	/* Gtk functions are used in Scheme code, so this must be called in case REPL was invoked. */
+	gtk_init(&argc, &argv);
+
 	if(start_repl) {
-		ono_interp = ono_script_init(conf_path, NULL);
+		ono_interp = ono_script_init(conf_path);
 
 		g_printf("Ono REPL. Type (quit) to exit interpreter.");
 		scheme_load_named_file(ono_interp, stdin, "stdin");
 		ono_script_fini(ono_interp);
 	} else {
-		gtk_init(&argc, &argv);
 		create_tray_icon();
 		gtk_main();
 	}
