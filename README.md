@@ -23,8 +23,9 @@ Make sure you have C compiler, GNU make and Gtk+2 installed
 (compilation under Gtk+3 isn't tested, but should work out of the
 box).
 
-Download latest official release or clone this repository (if you
-would like to have bleeding edge code), and inside *ono* folder run:
+[Download](https://github.com/sanel/ono/releases) latest official
+release or clone this repository (if you would like to have bleeding
+edge code), and inside *ono* folder run:
 
 ```
 $ make
@@ -57,16 +58,15 @@ your Offlineimap configuration.
 Configuration language *ono* is using is
 [Scheme](http://en.wikipedia.org/wiki/Scheme_(programming_language)),
 better say a subset of R5RS specification, which gives *ono* enough
-flexibility to be extended and modified without writing C code.
+flexibility to be extended and modified without writing additional C
+code.
 
-If you never used Scheme before, no worry; this is very simple
+If you never used Scheme before, no worry; Scheme is very simple
 language easy to learn and there are numerous tutorials online for
-beginners. For example
-[Yet Another Scheme Tutorial](http://www.shido.info/lisp/idx_scm_e.html)
-is really nice introduction to Scheme.
+beginners; for example
+[Yet Another Scheme Tutorial](http://www.shido.info/lisp/idx_scm_e.html).
 
-**onorc** is heavily commented, but here is example how it can look
-like:
+**onorc** is heavily commented, but here is how it can look like:
 
 ```scheme
 ; this is a comment
@@ -91,27 +91,66 @@ location.
 
 _*offlineimap-args*_ are global Offlineimap command line arguments
 used for all accounts. With *ono* you can set account specific or
-global arguments (arguments Offlineimap understainds, of course).
+global arguments (arguments Offlineimap understands, of course).
 
 *ono-menu* is a construct where you put menu items, displayed when
 right mouse button is clicked on *ono* system tray icon. Each entry
 has label name, Offlineimap account name (or Scheme function) and
 optional icon, assigned to given menu item.
 
-For example, statement:
+For example, the statement:
 
 ```scheme
   (vector "Fetch yahoo" "yahoo")
 ```
 
 tells *ono* to add menu entry labeled as "Fetch yahoo" and assign
-action; in this case is to invoke Offlineimap with *yahoo* account
-(just like you would say in command line: *offlineime -a yahoo*).
+action; in this case is to invoke Offlineimap with *yahoo* account,
+just like you would say in command line: *offlineimap -a yahoo*.
 
 Action can be either Scheme string or function. In case of string,
 *ono* will assume you have Offlineimap account with the same name or
 will not be able to run Offlineimap successfully. However, if you
 would like more advanced control, you should use a function.
+
+In our example, "Fetch All" entry is using a function with explicit
+call of builtin *(offlineimap)* Scheme function. *(offlineimap)*
+accepts two parameters, account entry in offlineimaprc and
+Offlineimap additional arguments.
+
+If you put **#f** (false in Scheme), *ono* will call Offlineimap
+without account and arguments, which will at the end request from
+Offlineimap to synchronize all accounts.
+
+*ono-on-tray-click* tells *ono* what to do when you click on *ono*
+icon in system tray (usually with left mouse button). In our example,
+it will run *mrxvt* terminal in fullscreen and start Mutt mail agent.
+
+## Command line arguments
+
+You can run *ono -h* to see command line arguments, which should be
+self-explanatory. 
+
+## Using ono REPL
+
+*ono* comes with builtin Scheme
+[REPL](http://en.wikipedia.org/wiki/Read\u2013eval\u2013print_loop)
+where you can write and evaluate Scheme code, experiment with *ono*
+functions, test configuration and more. To start it, use **ono -r**
+and to see how things works you can, for example, call manually
+*(offlineimap)* like:
+
+```
+Ono REPL. Type (quit) to exit interpreter.
+> (offlineimap "gmail" "--info")
+```
+
+which will output in REPL details about given account. This command is
+the same as you would say to Offlineimap:
+
+```
+$ offlineimap -a gmail --info
+```
 
 ## License
 
