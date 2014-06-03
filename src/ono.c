@@ -116,7 +116,7 @@ void parse_args(int argc, char **argv) {
 			case 'h': {
 				gchar *app = g_path_get_basename(argv[0]);
 				g_printf("Usage: %s [options]\n"
-						 "Systray access to offlineima and more.\n"
+						 "Systray access to offlineimap and more.\n"
 						 "Options:\n"
 						 "    --help             display this help\n"
 						 "    --repl             start program REPL (shell)\n"
