@@ -20,8 +20,9 @@
 #include <stdlib.h>
 #include "ts/scheme-private.h"
 #include "ono-script.h"
-
 #include "boot_ss.h"
+
+static GtkStatusIcon *tray_icon = NULL;
 
 #define SCHEME_RET_IF_FAIL(scm, expr, str)      \
   do {                                          \
@@ -110,17 +111,56 @@ pointer _system_with_reader(scheme *s, pointer args) {
 }
 
 static
+pointer _ono_icon_set(scheme *s, pointer args) {
+	int ret;
+	pointer arg = s->vptr->pair_car(args);
+
+	SCHEME_RET_IF_FAIL(s, arg != s->NIL && s->vptr->is_string(arg),
+					   "Expected string object as first argument.");
+
+	if(tray_icon) {
+		gtk_status_icon_set_visible(tray_icon, FALSE);
+		gtk_status_icon_set_from_icon_name(tray_icon, s->vptr->string_value(arg));
+		gtk_status_icon_set_visible(tray_icon, TRUE);
+		return s->T;
+	}
+
+	return s->F;
+}
+
+static
+pointer _ono_tooltip_set(scheme *s, pointer args) {
+	int ret;
+	pointer arg = s->vptr->pair_car(args);
+
+	SCHEME_RET_IF_FAIL(s, arg != s->NIL && s->vptr->is_string(arg),
+					   "Expected string object as first argument.");
+
+	if(tray_icon) {
+		gtk_status_icon_set_tooltip(tray_icon, s->vptr->string_value(arg));
+		return s->T;
+	}
+
+	return s->F;
+}
+
+static
 void ono_script_init_internals(scheme *s) {
 	SCHEME_DEFINE(s, _icon_from_theme, "icon-from-theme");
 	SCHEME_DEFINE(s, _system, "system");
 	SCHEME_DEFINE(s, _system_with_reader, "system-with-reader");
+
+	/* valid only in GUI (not REPL) */
+	SCHEME_DEFINE(s, _ono_icon_set, "ono-icon");
+	SCHEME_DEFINE(s, _ono_tooltip_set, "ono-tooltip");
 }
 
-scheme *ono_script_init(const char *cfile) {
+scheme *ono_script_init(const char *cfile, GtkStatusIcon *icon) {
 	scheme *scm = NULL;
 	char   *conf_home = NULL;
 	FILE   *fd;
 
+	tray_icon = icon;
 	scm = scheme_init_new();
 
 	scheme_set_output_port_file(scm, stdout);
@@ -203,7 +243,6 @@ static GtkWidget *fill_or_run(scheme *s, GtkWidget *menu, const char *find_label
 	}
 
 	return menu;
-
 }
 
 static

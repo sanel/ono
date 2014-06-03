@@ -3,9 +3,12 @@
 
 ;; offlineimap path. By default, ono will look in $PATH for offlineimap binary and if you keep
 ;; it somewhere else (outside $PATH), uncomment this line and setup absolute path.
+
 ;(set! *offlineimap-path* "/opt/offlineimap/bin/offlineimap")
 
-;; offlineimap arguments passed to all accounts
+;; offlineimap arguments passed to all accounts. Additionally, each account can have specific
+;; options, set inside 'ono-menu' section.
+
 ;(set! *offlineimap-args* "-u quiet")
 
 ;; Main ono menu (invoked with right mouse button on ono icon). This menu can have mulitple
@@ -30,12 +33,12 @@
 ;; 
 ;;
 ;; OPTIONAL-MENU-ICON is path to menu icon that will be displayed alongside MENU-LABEL. This icon
-;; can be absolute path to some icon or icon from Gtk icon theme (in that case you must supply icon
-;; name without extension). For example:
+;; has be absolute path to some icon. If you would like to use icon for Gtk icon theme, use (icon-from-theme)
+;; function.
 ;;
 ;; (ono-menu
-;;   (vector "Get gmail" "gmail" "path/to/gmail.png")  -> absolute icon path
-;;   (vector "Get gmail" "gmail" "gmail")              -> icon from icon theme
+;;   (vector "Get gmail" "gmail" "path/to/gmail.png")       -> absolute icon path
+;;   (vector "Get gmail" "gmail" (icon-from-theme "gmail")) -> icon from icon theme; MUST be without extension
 ;;   ...)
 
 (ono-menu

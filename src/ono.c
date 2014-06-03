@@ -26,6 +26,7 @@
 static scheme *ono_interp;
 static int     start_repl = 0;
 static char   *conf_path  = NULL;
+static GtkStatusIcon *tray_icon = NULL;
 
 static
 void tray_icon_on_click(GtkStatusIcon *status_icon, gpointer user_data) {
@@ -57,7 +58,6 @@ void menu_exit(GtkWidget *widget, gpointer user_data) {
 
 static
 void create_tray_icon(void) {
-	GtkStatusIcon *tray_icon;
 	GtkWidget *menu, *quit_item, *sep_item;
 
 	/* menu */
@@ -74,24 +74,26 @@ void create_tray_icon(void) {
 	sep_item = gtk_separator_menu_item_new();
 	gtk_menu_prepend(GTK_MENU(menu), sep_item);
 	gtk_widget_show(sep_item);
+	
+	/* create tray_icon first */
+	tray_icon = gtk_status_icon_new();
 
 	/* init interpreter */
-	ono_interp = ono_script_init(conf_path);
+	ono_interp = ono_script_init(conf_path, tray_icon);
 
 	/* get user supplied menu */
 	menu = ono_script_parse_menu(ono_interp, menu);
 	gtk_widget_show(menu);
-
-	/* tray icon */
-	tray_icon = gtk_status_icon_new();
+	
+	/* now setup tray_icon details, as callbacks uses interpreter */
 	g_signal_connect(G_OBJECT(tray_icon), "activate",
 					 G_CALLBACK(tray_icon_on_click), ono_interp);
 
 	g_signal_connect(G_OBJECT(tray_icon), "popup-menu",
 					 G_CALLBACK(tray_icon_on_menu), menu);
 
+	/* default icon, but user can change it */
 	gtk_status_icon_set_from_icon_name(tray_icon, "internet-mail");
-	gtk_status_icon_set_tooltip(tray_icon, "Offlineimap status");
 	gtk_status_icon_set_visible(tray_icon, TRUE);
 }
 
@@ -146,7 +148,7 @@ int main(int argc, char **argv) {
 	gtk_init(&argc, &argv);
 
 	if(start_repl) {
-		ono_interp = ono_script_init(conf_path);
+		ono_interp = ono_script_init(conf_path, NULL);
 
 		g_printf("Ono REPL. Type (quit) to exit interpreter.");
 		scheme_load_named_file(ono_interp, stdin, "stdin");
