@@ -1,0 +1,27 @@
+NAME
+  ono - manage offlineimap from systray
+
+SYNOPSIS
+  ono [OPTIONS]
+
+DESCRIPTION
+  ono is configurable and portable GUI application from where you can
+  easily handle Offlineimap and start any mail agent (including
+  terminal agents, like Mutt).
+
+  With builtin scripting language, you can even abuse ono to serve
+  any program without system tray support.
+
+OPTIONS
+  -h, --help         The option -h displays help.
+  -r, --repl         Start REPL, where you can evaluate ono and Scheme expressions.
+  -c, --config file  Use file as configuration, instead $HOME/.onorc.
+
+SEE ALSO
+  offlineimap(1)
+
+BUGS
+  To report bugs, please use: https://github.com/sanel/ono/issues.
+
+AUTHOR
+  Sanel Zukan <sanelz@gmail.com>
