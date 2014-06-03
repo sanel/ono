@@ -74,7 +74,7 @@ void create_tray_icon(void) {
 	sep_item = gtk_separator_menu_item_new();
 	gtk_menu_prepend(GTK_MENU(menu), sep_item);
 	gtk_widget_show(sep_item);
-	
+
 	/* create tray_icon first */
 	tray_icon = gtk_status_icon_new();
 
@@ -84,7 +84,7 @@ void create_tray_icon(void) {
 	/* get user supplied menu */
 	menu = ono_script_parse_menu(ono_interp, menu);
 	gtk_widget_show(menu);
-	
+
 	/* now setup tray_icon details, as callbacks uses interpreter */
 	g_signal_connect(G_OBJECT(tray_icon), "activate",
 					 G_CALLBACK(tray_icon_on_click), ono_interp);
