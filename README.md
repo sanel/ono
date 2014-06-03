@@ -84,16 +84,16 @@ beginners; for example
    (system "mrxvt -m -e mutt")))
 ```
 
-_*offlineimap-path*_ should contain Offlineimap program location. By
+***offlineimap-path*** should contain Offlineimap program location. By
 default, you don't have to set this variable (*ono* will try to search
 it on your _$PATH_) unless you have installed Offlineimap on unusual
 location.
 
-_*offlineimap-args*_ are global Offlineimap command line arguments
+***offlineimap-args*** are global Offlineimap command line arguments
 used for all accounts. With *ono* you can set account specific or
 global arguments (arguments Offlineimap understands, of course).
 
-*ono-menu* is a construct where you put menu items, displayed when
+**ono-menu** is a construct where you put menu items, displayed when
 right mouse button is clicked on *ono* system tray icon. Each entry
 has label name, Offlineimap account name (or Scheme function) and
 optional icon, assigned to given menu item.
@@ -122,7 +122,7 @@ If you put **#f** (false in Scheme), *ono* will call Offlineimap
 without account and arguments, which will at the end request from
 Offlineimap to synchronize all accounts.
 
-*ono-on-tray-click* tells *ono* what to do when you click on *ono*
+**ono-on-tray-click** tells *ono* what to do when you click on *ono*
 icon in system tray (usually with left mouse button). In our example,
 it will run *mrxvt* terminal in fullscreen and start Mutt mail agent.
 
