@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Ono
+Exec=ono
+Icon=internet-mail
+Comment=Manage Offlineimap from system tray
+Terminal=false
+Type=Application
+Categories=Network;Utility;

@@ -18,6 +18,7 @@
 PREFIX    ?= /usr/local
 BINDIR    ?= $(PREFIX)/bin
 MANDIR    ?= $(PREFIX)/man/man1
+APPDIR    ?= /usr/share/applications
 
 CC        ?= gcc
 GTK_FLAGS ?= $(shell pkg-config gtk+-2.0 --cflags)
@@ -57,10 +58,12 @@ man:
 install: $(PROGNAME)
 	cp $(PROGNAME) $(BINDIR)
 	cp doc/ono.1 $(MANDIR)
+	cp ono.desktop $(APPDIR)
 
 uninstall:
 	rm -f $(BINDIR)/$(PROGNAME)
 	rm -f $(MANDIR)/ono.1
+	rm -f $(APPDIR)/ono.desktop
 
 # dependency management
 $(DEPFILE):
