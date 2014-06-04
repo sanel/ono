@@ -22,6 +22,8 @@
 #include "ono-script.h"
 #include "ts/scheme-private.h"
 
+#define ONO_VERSON "0.2"
+
 /* global interpreter object */
 static scheme *ono_interp;
 static int     start_repl = 0;
@@ -101,6 +103,7 @@ static
 void parse_args(int argc, char **argv) {
 	struct option options[] = {
 		{"help", no_argument, NULL, 'h'},
+		{"version", no_argument, NULL, 'v'},
 		{"repl", no_argument, NULL, 'r'},
 		{"config", required_argument, NULL, 'c'},
 		{NULL, 0, NULL, 0}
@@ -111,21 +114,26 @@ void parse_args(int argc, char **argv) {
 	optind = 0;
 	optopt = 0;
 
-	while((ch = getopt_long(argc, argv, "hrc:", options, NULL)) != EOF) {
+	while((ch = getopt_long(argc, argv, "hvrc:", options, NULL)) != EOF) {
 		switch(ch) {
 			case 'h': {
 				gchar *app = g_path_get_basename(argv[0]);
 				g_printf("Usage: %s [options]\n"
 						 "Systray access to offlineimap and more.\n"
 						 "Options:\n"
-						 "    --help             display this help\n"
-						 "    --repl             start program REPL (shell)\n"
-						 "    --config [file]    load file instead $HOME/.onorc\n",
+						 "   -h, --help             display this help\n"
+						 "   -v, --version          display version\n"
+						 "   -r, --repl             start program REPL (shell)\n"
+						 "   -c, --config [file]    load file instead $HOME/.onorc\n",
 						app);
 				g_free(app);
 				exit(0);
 				break;
 			}
+			case 'v':
+				g_printf(ONO_VERSON "\n");
+				exit(0);
+				break;
 			case 'r':
 				start_repl = 1;
 				break;

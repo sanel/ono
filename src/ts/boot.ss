@@ -806,8 +806,9 @@
 		 (if (vector? item)
 		   (let ([vitem (vector-ref item 1)])
 			 (cond
-			  [(string? vitem) (vector-set! item 1 (lambda ()
-													 (offlineimap vitem #f)))]
+			  [(or (string? vitem) (eqv? vitem #f))
+			   (vector-set! item 1 (lambda ()
+									 (offlineimap vitem #f)))]
 			  [(closure? vitem)] #t
 			  [else
 			   (error "Unsupported element in ono-menu list. Only strings or functions are allowed.")]))))
