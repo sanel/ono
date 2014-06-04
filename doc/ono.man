@@ -14,6 +14,7 @@ DESCRIPTION
 
 OPTIONS
   -h, --help         The option -h displays help.
+  -v, --version      The option -v displays version.
   -r, --repl         Start REPL, where you can evaluate ono and Scheme expressions.
   -c, --config file  Use file as configuration, instead $HOME/.onorc.
 
