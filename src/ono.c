@@ -26,8 +26,9 @@
 
 /* global interpreter object */
 static scheme *ono_interp;
-static int     start_repl = 0;
-static char   *conf_path  = NULL;
+
+static int  start_repl = 0;
+static char *conf_path  = NULL;
 static GtkStatusIcon *tray_icon = NULL;
 
 static
@@ -149,7 +150,6 @@ void parse_args(int argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
-	GtkStatusIcon *tray_icon;
 	parse_args(argc, argv);
 
 	/* Gtk functions are used in Scheme code, so this must be called in case REPL was invoked. */
@@ -165,5 +165,6 @@ int main(int argc, char **argv) {
 		create_tray_icon();
 		gtk_main();
 	}
+
 	return 0;
 }
