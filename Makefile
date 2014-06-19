@@ -23,7 +23,7 @@ APPDIR    ?= /usr/share/applications
 CC        ?= gcc
 GTK_FLAGS ?= $(shell pkg-config gtk+-2.0 --cflags)
 GTK_LIBS  ?= $(shell pkg-config gtk+-2.0 --libs)
-DEBUG     ?= -O2
+DEBUG     ?= -g3
 CFLAGS    ?= -I. -Isrc -Isrc/ts $(GTK_FLAGS)
 LDLIBS    ?= $(GTK_LIBS)
 

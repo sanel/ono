@@ -623,6 +623,7 @@ static const char bundled_scripts_content[] =
     " [else "
     " (error \"Unsupported element in ono-menu list. Only strings or functions are allowed.\")])))) "
     " (loop (cdr menu))))) "
+    " (define item vector) "
     " (define (ono-on-tray-click fn) (set! *ono-on-tray-click* fn)) "
     " (define (ono-on-stdout fn)     (set! *ono-on-stdout* fn)) "
     " (define (ono-on-new-mail fn)   (set! *ono-on-new-mail* fn)) "
