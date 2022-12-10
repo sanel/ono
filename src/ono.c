@@ -23,7 +23,7 @@
 #include "ono-utils.h"
 #include "ts/scheme-private.h"
 
-#define ONO_VERSON "0.3"
+#define ONO_VERSON "0.3.0"
 
 /* global interpreter object */
 static scheme *ono_interp;
