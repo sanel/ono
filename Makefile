@@ -31,9 +31,14 @@ endif
 CC        ?= gcc
 GTK_FLAGS ?= $(shell pkg-config $(GTK_PC) --cflags)
 GTK_LIBS  ?= $(shell pkg-config $(GTK_PC) --libs)
-DEBUG     ?= -g3
 CFLAGS    ?= -Wno-deprecated-declarations -I. -Isrc -Isrc/ts $(GTK_FLAGS) $(PRE_CFLAGS)
 LDLIBS    ?= $(GTK_LIBS)
+
+ifdef DEBUG
+  CFLAGS += -g3
+else
+  CFLAGS += -O2
+endif
 
 PROGNAME  = src/ono
 BOOT_SS   = src/boot_ss.h
@@ -47,7 +52,7 @@ DEPFLAGS  = -Y -f $(DEPFILE) -s $(DEPTOKEN)
 all: $(PROGNAME) $(BOOT_SS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(DEBUG) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(BOOT_SS): src/ts/boot.ss
 	./tools/gen-c-string.sh $< > $@
