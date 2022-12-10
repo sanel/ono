@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include "ts/scheme-private.h"
 #include "ono-script.h"
+#include "ono-utils.h"
 #include "boot_ss.h"
 
 static GtkStatusIcon *tray_icon = NULL;
@@ -137,11 +138,7 @@ pointer _ono_tooltip_set(scheme *s, pointer args) {
 					   "Expected string object as first argument.");
 
 	if(tray_icon) {
-#ifdef USE_GTK3
-		gtk_status_icon_set_tooltip_text(tray_icon, s->vptr->string_value(arg));
-#else
-		gtk_status_icon_set_tooltip(tray_icon, s->vptr->string_value(arg));
-#endif
+		ono_status_icon_set_tooltip(tray_icon, s->vptr->string_value(arg));
 		return s->T;
 	}
 
@@ -236,11 +233,7 @@ static GtkWidget *fill_or_run(scheme *s, GtkWidget *menu, const char *find_label
 			}
 
 			g_signal_connect(G_OBJECT(menu_item), "activate", G_CALLBACK(menu_item_callback), s);
-#ifdef USE_GTK3
-			gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
-#else
-			gtk_menu_prepend(GTK_MENU(menu), menu_item);
-#endif
+			ono_menu_prepend(ONO_MENU(menu), menu_item);
 			gtk_widget_show(menu_item);
 
 		} else if(g_strcmp0(mlabel, find_label) == 0) {

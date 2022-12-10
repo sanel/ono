@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include "ono-script.h"
+#include "ono-utils.h"
 #include "ts/scheme-private.h"
 
 #define ONO_VERSON "0.3"
@@ -73,20 +74,11 @@ void create_tray_icon(void) {
 
 	g_signal_connect(G_OBJECT(quit_item), "activate", G_CALLBACK(menu_exit), NULL);
 
-#ifdef USE_GTK3
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), quit_item);
-#else
-	gtk_menu_append(GTK_MENU(menu), quit_item);
-#endif
-
+	ono_menu_append(ONO_MENU(menu), quit_item);
 	gtk_widget_show(quit_item);
 
 	sep_item = gtk_separator_menu_item_new();
-#ifdef USE_GTK3
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), sep_item);
-#else
-	gtk_menu_prepend(GTK_MENU(menu), sep_item);
-#endif
+	ono_menu_prepend(ONO_MENU(menu), sep_item);
 	gtk_widget_show(sep_item);
 
 	/* create tray_icon first */
