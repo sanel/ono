@@ -1,7 +1,8 @@
 # MAKEDEPENDS
 
-src/ono.o: src/ono-script.h src/ts/scheme.h src/ts/scheme-private.h
-src/ono.o: src/ts/scheme.h src/ts/opdefines.h
 src/ono-script.o: src/ts/scheme-private.h src/ts/scheme.h src/ts/opdefines.h
-src/ono-script.o: src/ono-script.h src/ts/scheme.h src/boot_ss.h
+src/ono-script.o: src/ono-script.h src/ts/scheme.h src/ono-utils.h
+src/ono-script.o: src/boot_ss.h
+src/ono.o: src/ono-script.h src/ts/scheme.h src/ono-utils.h
+src/ono.o: src/ts/scheme-private.h src/ts/scheme.h src/ts/opdefines.h
 src/ts/scheme.o: src/ts/scheme-private.h src/ts/scheme.h src/ts/opdefines.h
