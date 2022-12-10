@@ -577,6 +577,8 @@ static const char bundled_scripts_content[] =
     " (define (println . args) "
     " (for-each display args) "
     " (newline)) "
+    " (define (system-async cmd) "
+    " (system (string-append cmd \" &\"))) "
     " (define (call-function-maybe sym . args) "
     " (if (defined? sym) "
     " (let ([fun (eval sym)]) "

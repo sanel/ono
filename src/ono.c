@@ -29,6 +29,7 @@ static scheme *ono_interp;
 
 static int  start_repl = 0;
 static char *conf_path  = NULL;
+
 static GtkStatusIcon *tray_icon = NULL;
 
 static
@@ -119,8 +120,8 @@ void parse_args(int argc, char **argv) {
 		switch(ch) {
 			case 'h': {
 				gchar *app = g_path_get_basename(argv[0]);
-				g_printf("Usage: %s [options]\n"
-						 "Systray access to offlineimap and more.\n"
+				g_print("Usage: %s [options]\n"
+						"Systray access to offlineimap and more.\n"
 						 "Options:\n"
 						 "   -h, --help             display this help\n"
 						 "   -v, --version          display version\n"
@@ -132,7 +133,7 @@ void parse_args(int argc, char **argv) {
 				break;
 			}
 			case 'v':
-				g_printf(ONO_VERSON "\n");
+				g_print(ONO_VERSON "\n");
 				exit(0);
 				break;
 			case 'r':
@@ -142,7 +143,7 @@ void parse_args(int argc, char **argv) {
 				conf_path = optarg;
 				break;
 			default:
-				g_printf("Use '--help' to see options.\n");
+				g_print("Use '--help' to see options.\n");
 				exit(0);
 				break;
 		}
@@ -158,7 +159,7 @@ int main(int argc, char **argv) {
 	if(start_repl) {
 		ono_interp = ono_script_init(conf_path, NULL);
 
-		g_printf("Ono REPL. Type (quit) to exit interpreter.");
+		g_print("Ono REPL. Type (quit) to exit interpreter.");
 		scheme_load_named_file(ono_interp, stdin, "stdin");
 		ono_script_fini(ono_interp);
 	} else {

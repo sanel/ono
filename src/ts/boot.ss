@@ -757,6 +757,9 @@
   (for-each display args)
   (newline))
 
+(define (system-async cmd)
+  (system (string-append cmd " &")))
+
 ;; check if function is defined and call it with argumenrs
 (define (call-function-maybe sym . args)
   (if (defined? sym)
