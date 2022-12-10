@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 Sanel Zukan
+# Copyright (C) 2014-2022 Sanel Zukan
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,11 +20,19 @@ BINDIR    ?= $(PREFIX)/bin
 MANDIR    ?= $(PREFIX)/man/man1
 APPDIR    ?= /usr/share/applications
 
+ifdef USE_GTK3
+  GTK_PC      = gtk+-3.0
+  PRE_CFLAGS  = -DUSE_GTK3
+else
+  # by default use GTK2
+  GTK_PC      = gtk+-2.0
+endif
+
 CC        ?= gcc
-GTK_FLAGS ?= $(shell pkg-config gtk+-2.0 --cflags)
-GTK_LIBS  ?= $(shell pkg-config gtk+-2.0 --libs)
+GTK_FLAGS ?= $(shell pkg-config $(GTK_PC) --cflags)
+GTK_LIBS  ?= $(shell pkg-config $(GTK_PC) --libs)
 DEBUG     ?= -g3
-CFLAGS    ?= -Wno-deprecated-declarations -I. -Isrc -Isrc/ts $(GTK_FLAGS)
+CFLAGS    ?= -Wno-deprecated-declarations -I. -Isrc -Isrc/ts $(GTK_FLAGS) $(PRE_CFLAGS)
 LDLIBS    ?= $(GTK_LIBS)
 
 PROGNAME  = src/ono

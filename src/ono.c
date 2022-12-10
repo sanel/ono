@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Sanel Zukan
+ * Copyright (C) 2014-2022 Sanel Zukan
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@
 #include "ono-script.h"
 #include "ts/scheme-private.h"
 
-#define ONO_VERSON "0.2"
+#define ONO_VERSON "0.3"
 
 /* global interpreter object */
 static scheme *ono_interp;
@@ -72,11 +72,21 @@ void create_tray_icon(void) {
 							  gtk_image_new_from_stock(GTK_STOCK_QUIT, GTK_ICON_SIZE_MENU));
 
 	g_signal_connect(G_OBJECT(quit_item), "activate", G_CALLBACK(menu_exit), NULL);
+
+#ifdef USE_GTK3
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), quit_item);
+#else
 	gtk_menu_append(GTK_MENU(menu), quit_item);
+#endif
+
 	gtk_widget_show(quit_item);
 
 	sep_item = gtk_separator_menu_item_new();
+#ifdef USE_GTK3
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), sep_item);
+#else
 	gtk_menu_prepend(GTK_MENU(menu), sep_item);
+#endif
 	gtk_widget_show(sep_item);
 
 	/* create tray_icon first */
