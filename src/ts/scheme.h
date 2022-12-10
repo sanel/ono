@@ -16,8 +16,8 @@ extern "C" {
 #define USE_INTERFACE 1
 #define USE_MATH 0
 
-#ifndef INLINE	 
-#define INLINE inline
+#ifndef INLINE
+# define INLINE inline
 #endif
 
 /* If used as standalone interpreter */
@@ -107,10 +107,6 @@ extern "C" {
 
 #ifndef STDIO_ADDS_CR    /* Define if DOS/Windows */
 # define STDIO_ADDS_CR 0
-#endif
-
-#ifndef INLINE
-# define INLINE
 #endif
 
 #ifndef USE_INTERFACE

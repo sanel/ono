@@ -202,9 +202,9 @@ INTERFACE double rvalue(pointer p)    { return (!num_is_integer(p)?(p)->_object.
 #define set_num_real(p)      (p)->_object._number.is_fixnum=0;
 INTERFACE  long charvalue(pointer p)  { return ivalue_unchecked(p); }
 
-INTERFACE INLINE int is_port(pointer p)     { return (type(p)==T_PORT); }
-INTERFACE INLINE int is_inport(pointer p)  { return is_port(p) && p->_object._port->kind & port_input; }
-INTERFACE INLINE int is_outport(pointer p) { return is_port(p) && p->_object._port->kind & port_output; }
+INTERFACE INLINE int is_port(pointer p)           { return (type(p)==T_PORT); }
+INTERFACE INLINE static int is_inport(pointer p)  { return is_port(p) && p->_object._port->kind & port_input; }
+INTERFACE INLINE static int is_outport(pointer p) { return is_port(p) && p->_object._port->kind & port_output; }
 
 INTERFACE INLINE int is_pair(pointer p)     { return (type(p)==T_PAIR); }
 #define car(p)           ((p)->_object._cons._car)
@@ -229,7 +229,7 @@ INTERFACE INLINE char *syntaxname(pointer p) { return strvalue(car(p)); }
 static const char *procname(pointer x);
 
 INTERFACE INLINE int is_closure(pointer p)  { return (type(p)==T_CLOSURE); }
-INTERFACE INLINE int is_macro(pointer p)    { return (type(p)==T_MACRO); }
+INTERFACE INLINE static int is_macro(pointer p)    { return (type(p)==T_MACRO); }
 INTERFACE INLINE pointer closure_code(pointer p)   { return car(p); }
 INTERFACE INLINE pointer closure_env(pointer p)    { return cdr(p); }
 
@@ -255,7 +255,7 @@ INTERFACE INLINE int is_immutable(pointer p) { return (typeflag(p)&T_IMMUTABLE);
 INTERFACE INLINE void setimmutable(pointer p) { typeflag(p) |= T_IMMUTABLE; }
 
 /* opaque type */
-INTERFACE INLINE int is_opaque(pointer p)   { return (type(p)==T_OPAQUE); }
+INTERFACE INLINE static int is_opaque(pointer p)   { return (type(p)==T_OPAQUE); }
 INTERFACE void       *opaquevalue(pointer p)      { return (p)->_object._opaque._pvalue; }
 INTERFACE const char *opaquetag(pointer p) { return (p)->_object._opaque._tag; }
 INTERFACE static pointer mk_opaque(scheme *sc, const char *tag, void *ptr, void (*free_func)(void*));
